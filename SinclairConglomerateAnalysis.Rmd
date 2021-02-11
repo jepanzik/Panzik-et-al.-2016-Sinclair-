@@ -8,10 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 library(knitr)
 library(ggplot2)
-#library(geostats)
-#library(RFOC)
-library(RockFab)
-#library(EBImage)
+library(gcookbook)
 opts_chunk$set(echo = TRUE)
 ```
 
@@ -37,20 +34,24 @@ head(cong)
 The first thing I want to see is the distribution of demagnetization temperature related to the demagnetization of magnetite at ~580$^\circ$C and hematite at ~680$^\circ$C.
 ```{r}
 ggplot(cong, aes(x=Temp)) + 
-      geom_histogram(aes(y=..density..), color="black", fill="white") +
-      geom_density() +
-      geom_vline(aes(xintercept=580), color="blue") +
-      geom_vline(aes(xintercept=680), color="red")
+  geom_histogram(aes(y=..density..), color="black", fill="white", bins=20) +
+  geom_density() +
+  geom_vline(aes(xintercept=580), color="blue") +
+  geom_vline(aes(xintercept=680), color="red") +
+  xlab("Demagnetization Temperature (°C)") +
+  ggtitle("Distribution of Demagnetization Temperatures")
 ```
 
 ```{r}
-#strike <- runif(min = 0, max = 360, n = 1)
-#dip <- runif(min = 0, max = 90, n = 1)
-#trend <- runif(min = 0, max = 360, n = 1)
-#plunge <- runif(min = 0, max = 90, n = 1)
-#StereoPlot(my.title = "Example Stereonet")
-#StereoWeb()
-#StereoCirc()
-#StereoPoint(my.az = 180, my.inc = 45)
-
+p <- ggplot(cong) +
+  coord_polar() +
+  geom_point(aes(x=Dec, y=abs(Inc), size=a95), fill=ifelse(cong$Inc>=0,"red","#00BFC4"), shape=21, alpha=0.3) + 
+  geom_point(aes(x=Dec, y=abs(Inc), shape=Inc>=0)) +
+  scale_shape_discrete(name = "Inclination", labels = c("Negative", "Positive")) +
+  scale_size_area(max_size=10) +
+  scale_x_continuous(limits=c(0,360),breaks=seq(0,360,by=45)) +
+  xlab("Declination (°)") +
+  ylab("Inclination (°)") +
+  ggtitle("Magnetic Directions of Conglomerate Samples")
+p
 ```
