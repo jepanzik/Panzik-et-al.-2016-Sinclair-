@@ -8,6 +8,10 @@ output: html_document
 ```{r setup, include=FALSE}
 library(knitr)
 library(ggplot2)
+#library(geostats)
+#library(RFOC)
+library(RockFab)
+#library(EBImage)
 opts_chunk$set(echo = TRUE)
 ```
 
@@ -30,10 +34,23 @@ str(cong)
 head(cong)
 ```
 
+The first thing I want to see is the distribution of demagnetization temperature related to the demagnetization of magnetite at ~580$^\circ$C and hematite at ~680$^\circ$C.
+```{r}
+ggplot(cong, aes(x=Temp)) + 
+      geom_histogram(aes(y=..density..), color="black", fill="white") +
+      geom_density() +
+      geom_vline(aes(xintercept=580), color="blue") +
+      geom_vline(aes(xintercept=680), color="red")
+```
 
 ```{r}
-p<-ggplot(cong, aes(x=Temp)) + 
-      geom_histogram(aes(y=..density..), color="black", fill="white") +
-      geom_density()
-p
+#strike <- runif(min = 0, max = 360, n = 1)
+#dip <- runif(min = 0, max = 90, n = 1)
+#trend <- runif(min = 0, max = 360, n = 1)
+#plunge <- runif(min = 0, max = 90, n = 1)
+#StereoPlot(my.title = "Example Stereonet")
+#StereoWeb()
+#StereoCirc()
+#StereoPoint(my.az = 180, my.inc = 45)
+
 ```
