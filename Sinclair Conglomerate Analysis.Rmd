@@ -1,0 +1,12 @@
+---
+title: "Sinclair Conglomerate Analysis"
+author: "Joseph E. Panzik"
+date: "2/11/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+opts_chunk$set(echo = TRUE)
+```
+
