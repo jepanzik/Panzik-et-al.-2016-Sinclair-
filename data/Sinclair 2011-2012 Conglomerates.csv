@@ -1,4 +1,4 @@
-﻿Site,Sample,Formation,Lat. (°S),Long. (°E),Temperature (°C),D (°),I (°),α95 (°),Lithology
+﻿Site,Sample,Formation,Lat,Long,Temp,Dec,Inc,a95,Lithology
 JP1137,A,Guperas,-25.70921667,16.68181667,571,332.8,80.6,1.8,Rhyolite
 JP1137,B,Guperas,-25.70921667,16.68181667,595,252.9,50.9,3.2,Rhyolite Porphyry
 JP1137,C,Guperas,-25.70921667,16.68181667,595,239,43.9,11.3,Rhyolite Porphyry

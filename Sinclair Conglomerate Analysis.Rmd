@@ -7,5 +7,33 @@ output: html_document
 
 ```{r setup, include=FALSE}
 library(knitr)
+library(ggplot2)
 opts_chunk$set(echo = TRUE)
+```
+
+## Overview
+This data is used and published in Panzik, J.E., Evans, D.A.D., Kasbohm, J.J., Hanson, R.E., Gose, W. & Desormeau, J. Using paleomagnetism and geochronologic data to determine late Mesoproterozoic paleogeographic history and tectonic relations of the Sinclair Terrane, Namaqua orogen, Namibia. *Geological Society of London Special Publication* **424**, 119-143 (2016).
+
+The analysis below shows and describes the conglomerate test performed for the publication and provides open-access to the data.
+
+## Loading Data
+The data will be loaded from a CSV file that contains the site information and least squares declination and inclination from demagnetization for each sample.
+
+```{r}
+cong <- read.csv(file="data/Sinclair 2011-2012 Conglomerates.csv", header=TRUE, na.strings=NA)
+```
+
+The data
+
+```{r}
+str(cong)
+head(cong)
+```
+
+
+```{r}
+p<-ggplot(cong, aes(x=Temp)) + 
+      geom_histogram(aes(y=..density..), color="black", fill="white") +
+      geom_density()
+p
 ```
