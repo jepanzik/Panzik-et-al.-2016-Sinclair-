@@ -1,7 +1,6 @@
 ---
 title: "Sinclair Conglomerate Analysis"
 author: "Joseph E. Panzik"
-date: "2/11/2021"
 output: html_document
 ---
 
@@ -24,6 +23,7 @@ The data will be loaded from a CSV file that contains the site information and l
 cong <- read.csv(file="data/Sinclair 2011-2012 Conglomerates.csv", header=TRUE, na.strings=NA)
 ```
 
+## Basic Structures & Plots of Conglomerate Data
 The data
 
 ```{r}
@@ -55,3 +55,9 @@ p <- ggplot(cong) +
   ggtitle("Magnetic Directions of Conglomerate Samples")
 p
 ```
+
+## Determining Pole Positions
+
+The pole positions will be determined using the site corrdinates and magnetic directions measured from the sample.
+
+The process uses the laws of sine and cosine on a sphere.
