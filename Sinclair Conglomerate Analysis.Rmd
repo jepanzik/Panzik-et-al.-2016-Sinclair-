@@ -9,5 +9,3 @@ output: html_document
 library(knitr)
 opts_chunk$set(echo = TRUE)
 ```
-
-x
