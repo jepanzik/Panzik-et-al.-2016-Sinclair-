@@ -32,13 +32,13 @@ str(cong)
 head(cong)
 ```
 
-The first thing I want to see is the distribution of demagnetization temperature related to the demagnetization of magnetite at ~580$^\circ$C and hematite at ~680$^\circ$C.
+The first thing I want to see is the distribution of demagnetization temperature related to the demagnetization of magnetite at ~580$^\circ$C and hematite at ~685$^\circ$C.
 ```{r}
 ggplot(cong, aes(x=Temp)) + 
   geom_histogram(aes(y=..density..), color="black", fill="white", bins=20) +
   geom_density() +
   geom_vline(aes(xintercept=580), color="blue") +
-  geom_vline(aes(xintercept=680), color="red") +
+  geom_vline(aes(xintercept=685), color="red") +
   xlab("Demagnetization Temperature (°C)") +
   ggtitle("Distribution of Demagnetization Temperatures")
 ```
@@ -51,34 +51,155 @@ Some of the samples have multiple temperature entries, so the lower temperature 
 cong <- cong[!duplicated(cong[ , c("Site","Sample")], fromLast=TRUE),]
 ```
 
-Stereonet plot of the measured inclination & declination values. The a95 circles are not perfect, but do a good job estimating the uncertainty.
+## Determining Randomness
+
+Visual inspectio  of randomness is done through plotting the inclination and declination values on stereonets.
+
+Since JP1137 & JP1214 came from the same location, and JP1145 & JP1209 came from the same location, individual and combined locality stereonets will be created.
+
+**Note: The $a_{95}$ circles are not perfect, but do a good job estimating the uncertainty.**
+
+The r code chunk for JP1137 is shown below, but the code chunks for other stereonets will be hidden from the final document to save space.
 
 ```{r, out.width="150%", out.height="150%"}
 #Radius scaling factor
 f<-1.36
-p <- ggplot(cong) +
+#Create JP1137 data subset
+sub <- cong[cong$Site=="JP1137",]
+p <- ggplot(sub) +
   geom_hline(yintercept = seq(0, 90, by = 30), colour = "grey90", size = 0.5) +
   geom_vline(xintercept = seq(0, 360-1, by = 45), colour = "grey90", size = 0.5) +
   coord_polar() +
   scale_x_continuous(limits=c(0,360), breaks=seq(0,315,by=45)) +
   scale_y_reverse(limits=c(90,0), breaks=seq(90,0,by=-30)) +
-  scale_radius(range=c(f*min(cong$a95),f*max(cong$a95))) +
+  scale_radius(range=c(f*min(sub$a95),f*max(sub$a95))) +
   theme_bw() +
   theme(panel.border = element_blank(),
         legend.key = element_blank(),
         axis.ticks = element_blank(),
         axis.text.y = element_blank(),
-        panel.grid  = element_blank()) +
-  geom_point(aes(x=Dec, y=abs(Inc), size=a95), fill=ifelse(cong$Inc>=0,"red","#00BFC4"), shape=21, alpha=0.3) + 
+        panel.grid  = element_blank(),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank()) +
+  geom_point(aes(x=Dec, y=abs(Inc), size=a95), fill=ifelse(sub$Inc>=0,"red","#00BFC4"), shape=21, alpha=0.3) + 
   geom_point(aes(x=Dec, y=abs(Inc), shape=Inc>=0)) +
   scale_shape_discrete(name = "Inclination", labels = c("Negative", "Positive")) +
-  xlab("Declination (°)") +
-  ylab("Inclination (°)") +
-  ggtitle("Magnetic Directions of Conglomerate Samples")
+  ggtitle("JP1137 Conglomerate Magnetic Directions")
 p
 ```
 
-## Determining Randomness
+```{r, echo=FALSE, out.width="150%", out.height="150%"}
+#Create JP1214 data subset
+sub <- cong[cong$Site=="JP1214",]
+p <- ggplot(sub) +
+  geom_hline(yintercept = seq(0, 90, by = 30), colour = "grey90", size = 0.5) +
+  geom_vline(xintercept = seq(0, 360-1, by = 45), colour = "grey90", size = 0.5) +
+  coord_polar() +
+  scale_x_continuous(limits=c(0,360), breaks=seq(0,315,by=45)) +
+  scale_y_reverse(limits=c(90,0), breaks=seq(90,0,by=-30)) +
+  scale_radius(range=c(f*min(sub$a95),f*max(sub$a95))) +
+  theme_bw() +
+  theme(panel.border = element_blank(),
+        legend.key = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text.y = element_blank(),
+        panel.grid  = element_blank(),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank()) +
+  geom_point(aes(x=Dec, y=abs(Inc), size=a95), fill=ifelse(sub$Inc>=0,"red","#00BFC4"), shape=21, alpha=0.3) + 
+  geom_point(aes(x=Dec, y=abs(Inc), shape=Inc>=0)) +
+  scale_shape_discrete(name = "Inclination", labels = c("Negative", "Positive")) +
+  ggtitle("JP1214 Conglomerate Magnetic Directions")
+p
+#Create JP1137 & JP1214 data subset
+sub <- cong[cong$Site=="JP1137"|cong$Site=="JP1214",]
+p <- ggplot(sub) +
+  geom_hline(yintercept = seq(0, 90, by = 30), colour = "grey90", size = 0.5) +
+  geom_vline(xintercept = seq(0, 360-1, by = 45), colour = "grey90", size = 0.5) +
+  coord_polar() +
+  scale_x_continuous(limits=c(0,360), breaks=seq(0,315,by=45)) +
+  scale_y_reverse(limits=c(90,0), breaks=seq(90,0,by=-30)) +
+  scale_radius(range=c(f*min(sub$a95),f*max(sub$a95))) +
+  theme_bw() +
+  theme(panel.border = element_blank(),
+        legend.key = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text.y = element_blank(),
+        panel.grid  = element_blank(),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank()) +
+  geom_point(aes(x=Dec, y=abs(Inc), size=a95), fill=ifelse(sub$Inc>=0,"red","#00BFC4"), shape=21, alpha=0.3) + 
+  geom_point(aes(x=Dec, y=abs(Inc), shape=Inc>=0)) +
+  scale_shape_discrete(name = "Inclination", labels = c("Negative", "Positive")) +
+  ggtitle("JP1137 & JP1214 Conglomerate Magnetic Directions")
+p
+#Create JP1145 data subset
+sub <- cong[cong$Site=="JP1145",]
+p <- ggplot(sub) +
+  geom_hline(yintercept = seq(0, 90, by = 30), colour = "grey90", size = 0.5) +
+  geom_vline(xintercept = seq(0, 360-1, by = 45), colour = "grey90", size = 0.5) +
+  coord_polar() +
+  scale_x_continuous(limits=c(0,360), breaks=seq(0,315,by=45)) +
+  scale_y_reverse(limits=c(90,0), breaks=seq(90,0,by=-30)) +
+  scale_radius(range=c(f*min(sub$a95),f*max(sub$a95))) +
+  theme_bw() +
+  theme(panel.border = element_blank(),
+        legend.key = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text.y = element_blank(),
+        panel.grid  = element_blank(),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank()) +
+  geom_point(aes(x=Dec, y=abs(Inc), size=a95), fill=ifelse(sub$Inc>=0,"red","#00BFC4"), shape=21, alpha=0.3) + 
+  geom_point(aes(x=Dec, y=abs(Inc), shape=Inc>=0)) +
+  scale_shape_discrete(name = "Inclination", labels = c("Negative", "Positive")) +
+  ggtitle("JP1145 Conglomerate Magnetic Directions")
+p
+#Create JP1209 data subset
+sub <- cong[cong$Site=="JP1209",]
+p <- ggplot(sub) +
+  geom_hline(yintercept = seq(0, 90, by = 30), colour = "grey90", size = 0.5) +
+  geom_vline(xintercept = seq(0, 360-1, by = 45), colour = "grey90", size = 0.5) +
+  coord_polar() +
+  scale_x_continuous(limits=c(0,360), breaks=seq(0,315,by=45)) +
+  scale_y_reverse(limits=c(90,0), breaks=seq(90,0,by=-30)) +
+  scale_radius(range=c(f*min(sub$a95),f*max(sub$a95))) +
+  theme_bw() +
+  theme(panel.border = element_blank(),
+        legend.key = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text.y = element_blank(),
+        panel.grid  = element_blank(),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank()) +
+  geom_point(aes(x=Dec, y=abs(Inc), size=a95), fill=ifelse(sub$Inc>=0,"red","#00BFC4"), shape=21, alpha=0.3) + 
+  geom_point(aes(x=Dec, y=abs(Inc), shape=Inc>=0)) +
+  scale_shape_discrete(name = "Inclination", labels = c("Negative", "Positive")) +
+  ggtitle("JP1209 Conglomerate Magnetic Directions")
+p
+#Create JP1145 & JP1209 data subset
+sub <- cong[cong$Site=="JP1145"|cong$Site=="JP1209",]
+p <- ggplot(sub) +
+  geom_hline(yintercept = seq(0, 90, by = 30), colour = "grey90", size = 0.5) +
+  geom_vline(xintercept = seq(0, 360-1, by = 45), colour = "grey90", size = 0.5) +
+  coord_polar() +
+  scale_x_continuous(limits=c(0,360), breaks=seq(0,315,by=45)) +
+  scale_y_reverse(limits=c(90,0), breaks=seq(90,0,by=-30)) +
+  scale_radius(range=c(f*min(sub$a95),f*max(sub$a95))) +
+  theme_bw() +
+  theme(panel.border = element_blank(),
+        legend.key = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text.y = element_blank(),
+        panel.grid  = element_blank(),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank()) +
+  geom_point(aes(x=Dec, y=abs(Inc), size=a95), fill=ifelse(sub$Inc>=0,"red","#00BFC4"), shape=21, alpha=0.3) + 
+  geom_point(aes(x=Dec, y=abs(Inc), shape=Inc>=0)) +
+  scale_shape_discrete(name = "Inclination", labels = c("Negative", "Positive")) +
+  ggtitle("JP1145 & JP1209 Conglomerate Magnetic Directions")
+p
+```
 
 The function of a conglomerate test is to determine if the clasts have a magnetic overprint that has affected the directionality of them all. While the image above indicates there appears to be randomness, we will compare the visual randomness to that of Watson's (1956) test for randomness.
 
@@ -95,6 +216,8 @@ The Watson (1956) randomness test compares the vector length created by summing 
 
 Since JP1137 & JP1214 came from the same location, and JP1145 & JP1209 came from the same location, $R$ and $R_0$ values will be determined for each individual site and for the site pairs.
 
+Sample code chunk is shown for JP1137. Code chunks for other sites are not displayed in output for brevity.
+
 ```{r}
 #Site JP1137
 xSumJP1137 <- sum(cong$x[cong$Site=="JP1137"])
@@ -102,6 +225,9 @@ ySumJP1137 <- sum(cong$y[cong$Site=="JP1137"])
 zSumJP1137 <- sum(cong$z[cong$Site=="JP1137"])
 RJP1137 <- sqrt((xSumJP1137)^2+(ySumJP1137)^2+(zSumJP1137)^2)
 R0JP1137 <- sqrt(7.815*(length(cong$x[cong$Site=="JP1137"])/3))
+```
+
+```{r, echo=FALSE}
 #Site JP1214
 xSumJP1214 <- sum(cong$x[cong$Site=="JP1214"])
 ySumJP1214 <- sum(cong$y[cong$Site=="JP1214"])
@@ -133,8 +259,7 @@ zSumJP1145JP1209 <- zSumJP1145+zSumJP1209
 RJP1145JP1209 <- sqrt((xSumJP1145JP1209)^2+(ySumJP1145JP1209)^2+(zSumJP1145JP1209)^2)
 R0JP1145JP1209 <- sqrt(7.815*(length(cong$x[cong$Site=="JP1145"|cong$Site=="JP1209"])/3))
 ```
-
-We can now put the $R$ and $R_0$ values for each in a table to determine whether sites pass the randomness test.
+We can now put the $R$ and $R_0$ values for each in a table to determine whether sites pass the randomness test. The $R_{max}$ value (maximum possible length of $R$) is also shown for each site as a comparison. Sites that fail the Watson (1956) randomness test because $R>R_0$ will be highlighted in light red.
 
 ```{r}
 R <- c(RJP1137, RJP1214, RJP1137JP1214, RJP1145, RJP1209, RJP1145JP1209)
