@@ -1,0 +1,60 @@
+---
+title: "Sinclair Strat Sections"
+author: "Joseph E. Panzik"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(ggplot2)
+library(dplyr)
+library(kableExtra)
+library(sqldf)
+opts_chunk$set(echo = TRUE)
+```
+
+## Overview
+
+This analysis goes through samples and sites collected in the Sinclair Terrane that are stratigraphic sedimentary sections. Bedding corrections are applied to the samples in 10% unfolding increments with an applied K Test.
+
+Pole positions are determined for each sample and section after bedding corrections are applied.
+
+## Loading Data
+
+The data is loaded from a CSV file that contains the site information and least squares declination and inclination from demagnetization for each sample.
+
+```{r}
+strat <- read.csv(file="data/Sinclair 2011-2012 Strat.csv", header=TRUE, na.strings=NA)
+```
+
+## Basic Structures & Plots
+The data
+
+```{r}
+str(strat)
+head(strat)
+```
+
+## Unfolding Analysis
+
+A fold test is performed to determine if there is a magnetic overprint since deformation. This is done by applying a 10% incremental unfolding of each sample and performing a K Test within each site and on all of the sites combined.
+
+The right-hand strike of bedding was done without an adjustment for present magnetic field declination variation. This means that a site variation adjustment will be applied to the right-hand strike based on the site coordinates (latitude & longitude) determined by the [NOAA Magnetic Declination Calculator](https://www.ngdc.noaa.gov/geomag/calculators/magcalc.shtml).
+
+```{r}
+strat$RHS_Adjust <- strat$Bed_RHS+strat$Site_Var
+```
+
+```{r}
+#rad <- pi/180
+#c <- abs(90-cong$Lat)
+#a <- 90-atan(0.5*tan(cong$Inc*rad))/rad
+#b <- acos(cos(a*rad)*cos(c*rad)+sin(a*rad)*sin(c*rad)*cos(cong$Dec*rad))/rad
+#A <- asin(sin(a*rad)*sin(cong$Dec*rad)/sin(b*rad))/rad
+
+#Pole_Lat <- 90-b
+#Pole_Long <- cong$Long+A
+
+#Pole_Lat
+#Pole_Long
+```
