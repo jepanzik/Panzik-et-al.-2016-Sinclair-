@@ -1,4 +1,4 @@
-﻿Site,Brief Description,Formation,Type,Group,Age (Ma),Age Uncert (Ma),Site Latitude (°N),Site Longitude (°E),RHS,Dip,Declination (°),Inclination (°),a-95 (°),n,N,Notes
+﻿Site,Brief Description,Formation,Type,Group,Age (Ma),Age Uncert (Ma),Site Latitude (°N),Site Longitude (°E),RHS,Dip,Declination (°),Inclination (°),a-95 (°),n_Used,N_Collected,Notes
 JP1101,Rhyolite Dyke,Post Guperas,Dyke,,,,-25.72498333,16.57878333,,,187.7,6.5,11,3,,
 JP1101,Contact,Post Guperas,Dyke,,,,-25.72498333,16.57878333,,,,,,,,
 JP1101,Host rock,Post Guperas,Dyke,,,,-25.72498333,16.57878333,,,47.2,-19,11,6,7,
