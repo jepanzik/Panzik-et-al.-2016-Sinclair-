@@ -18,14 +18,14 @@ This data is used and published in Panzik, J.E., Evans, D.A.D., Kasbohm, J.J., H
 The analysis below shows and describes the conglomerate test performed for the publication and provides open-access to the data.
 
 ## Loading Data
-The data will be loaded from a CSV file that contains the site information and least squares declination and inclination from demagnetization for each sample.
+The data is loaded from a CSV file that contains the site information and least squares declination and inclination from demagnetization for each sample.
 
 ```{r}
 cong <- read.csv(file="data/Sinclair 2011-2012 Conglomerates.csv", header=TRUE, na.strings=NA)
 ```
 
 ## Basic Structures & Plots of Conglomerate Data
-The data
+Displays basic format and structure of data and variables.
 
 ```{r}
 str(cong)
@@ -33,6 +33,7 @@ head(cong)
 ```
 
 The first thing I want to see is the distribution of demagnetization temperature related to the demagnetization of magnetite at ~580$^\circ$C and hematite at ~685$^\circ$C.
+
 ```{r}
 ggplot(cong, aes(x=Temp)) + 
   geom_histogram(aes(y=..density..), color="black", fill="white", bins=20) +
@@ -45,7 +46,7 @@ ggplot(cong, aes(x=Temp)) +
 
 ## Data Filtering
 
-Some of the samples have multiple temperature entries, so the lower temperature magnetic direction will be ignored in favor of the higher temperature directionality that should be consistent with hematite.
+Some of the samples have multiple temperature entries, so the lower temperature magnetic direction is ignored in favor of the higher temperature directionality that should be consistent with hematite.
 
 ```{r}
 cong <- cong[!duplicated(cong[ , c("Site","Sample")], fromLast=TRUE),]
@@ -55,11 +56,11 @@ cong <- cong[!duplicated(cong[ , c("Site","Sample")], fromLast=TRUE),]
 
 Visual inspectio  of randomness is done through plotting the inclination and declination values on stereonets.
 
-Since JP1137 & JP1214 came from the same location, and JP1145 & JP1209 came from the same location, individual and combined locality stereonets will be created.
+Since JP1137 & JP1214 came from the same location, and JP1145 & JP1209 came from the same location, individual and combined locality stereonets are created.
 
 **Note: The $a_{95}$ circles are not perfect, but do a good job estimating the uncertainty.**
 
-The r code chunk for JP1137 is shown below, but the code chunks for other stereonets will be hidden from the final document to save space.
+The r code chunk for JP1137 is shown below, but the code chunks for other stereonets are hidden from the final document to save space.
 
 ```{r, out.width="150%", out.height="150%"}
 #Radius scaling factor
@@ -201,9 +202,9 @@ p <- ggplot(sub) +
 p
 ```
 
-The function of a conglomerate test is to determine if the clasts have a magnetic overprint that has affected the directionality of them all. While the image above indicates there appears to be randomness, we will compare the visual randomness to that of Watson's (1956) test for randomness.
+The function of a conglomerate test is to determine if the clasts have a magnetic overprint that has affected the directionality of them all. While the image above indicates there appears to be randomness, we compare the visual randomness to that of Watson's (1956) test for randomness.
 
-Magnetic directions must first be converted to Cartesian coordinates.
+Magnetic directions are converted to Cartesian coordinates first.
 
 ```{r}
 rad <- pi/180
@@ -214,7 +215,7 @@ cong$z <- sin(cong$Inc*rad)
 
 The Watson (1956) randomness test compares the vector length created by summing the Cartesian coordinates, $R=\sqrt{(x_{sum})^2+(y_{sum})^2+(z_{sum})^2}$, to a critical value, $R_0=\sqrt{7.815*\frac{n}{3}}$, within each site. The $R$ value can range from $0$ to $n$ the number of samples used in the site; the closer the value is to $0$, the more random it is.
 
-Since JP1137 & JP1214 came from the same location, and JP1145 & JP1209 came from the same location, $R$ and $R_0$ values will be determined for each individual site and for the site pairs.
+Since JP1137 & JP1214 came from the same location, and JP1145 & JP1209 came from the same location, $R$ and $R_0$ values are determined for each individual site and for the site pairs.
 
 Sample code chunk is shown for JP1137. Code chunks for other sites are not displayed in output for brevity.
 

@@ -27,8 +27,8 @@ The data is loaded from a CSV file that contains the site information and least 
 strat <- read.csv(file="data/Sinclair 2011-2012 Strat.csv", header=TRUE, na.strings=NA)
 ```
 
-## Basic Structures & Plots
-The data
+## Basic Data Structure
+Displays basic format and structure of data and variables.
 
 ```{r}
 str(strat)
