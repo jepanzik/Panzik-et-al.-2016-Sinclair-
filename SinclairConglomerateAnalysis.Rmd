@@ -7,7 +7,8 @@ output: html_document
 ```{r setup, include=FALSE}
 library(knitr)
 library(ggplot2)
-library(gcookbook)
+library(dplyr)
+library(kableExtra)
 opts_chunk$set(echo = TRUE)
 ```
 
@@ -42,22 +43,112 @@ ggplot(cong, aes(x=Temp)) +
   ggtitle("Distribution of Demagnetization Temperatures")
 ```
 
+## Data Filtering
+
+Some of the samples have multiple temperature entries, so the lower temperature magnetic direction will be ignored in favor of the higher temperature directionality that should be consistent with hematite.
+
 ```{r}
+cong <- cong[!duplicated(cong[ , c("Site","Sample")], fromLast=TRUE),]
+```
+
+Stereonet plot of the measured inclination & declination values. The a95 circles are not perfect, but do a good job estimating the uncertainty.
+
+```{r, out.width="150%", out.height="150%"}
+#Radius scaling factor
+f<-1.36
 p <- ggplot(cong) +
+  geom_hline(yintercept = seq(0, 90, by = 30), colour = "grey90", size = 0.5) +
+  geom_vline(xintercept = seq(0, 360-1, by = 45), colour = "grey90", size = 0.5) +
   coord_polar() +
+  scale_x_continuous(limits=c(0,360), breaks=seq(0,315,by=45)) +
+  scale_y_reverse(limits=c(90,0), breaks=seq(90,0,by=-30)) +
+  scale_radius(range=c(f*min(cong$a95),f*max(cong$a95))) +
+  theme_bw() +
+  theme(panel.border = element_blank(),
+        legend.key = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text.y = element_blank(),
+        panel.grid  = element_blank()) +
   geom_point(aes(x=Dec, y=abs(Inc), size=a95), fill=ifelse(cong$Inc>=0,"red","#00BFC4"), shape=21, alpha=0.3) + 
   geom_point(aes(x=Dec, y=abs(Inc), shape=Inc>=0)) +
   scale_shape_discrete(name = "Inclination", labels = c("Negative", "Positive")) +
-  scale_size_area(max_size=10) +
-  scale_x_continuous(limits=c(0,360),breaks=seq(0,360,by=45)) +
   xlab("Declination (°)") +
   ylab("Inclination (°)") +
   ggtitle("Magnetic Directions of Conglomerate Samples")
 p
 ```
 
-## Determining Pole Positions
+## Determining Randomness
 
-The pole positions will be determined using the site corrdinates and magnetic directions measured from the sample.
+The function of a conglomerate test is to determine if the clasts have a magnetic overprint that has affected the directionality of them all. While the image above indicates there appears to be randomness, we will compare the visual randomness to that of Watson's (1956) test for randomness.
 
-The process uses the laws of sine and cosine on a sphere.
+Magnetic directions must first be converted to Cartesian coordinates.
+
+```{r}
+rad <- pi/180
+cong$x <- cos(cong$Inc*rad)*cos(cong$Dec*rad)
+cong$y <- cos(cong$Inc*rad)*sin(cong$Dec*rad)
+cong$z <- sin(cong$Inc*rad)
+```
+
+The Watson (1956) randomness test compares the vector length created by summing the Cartesian coordinates, $R=\sqrt{(x_{sum})^2+(y_{sum})^2+(z_{sum})^2}$, to a critical value, $R_0=\sqrt{7.815*\frac{n}{3}}$, within each site. The $R$ value can range from $0$ to $n$ the number of samples used in the site; the closer the value is to $0$, the more random it is.
+
+Since JP1137 & JP1214 came from the same location, and JP1145 & JP1209 came from the same location, $R$ and $R_0$ values will be determined for each individual site and for the site pairs.
+
+```{r}
+#Site JP1137
+xSumJP1137 <- sum(cong$x[cong$Site=="JP1137"])
+ySumJP1137 <- sum(cong$y[cong$Site=="JP1137"])
+zSumJP1137 <- sum(cong$z[cong$Site=="JP1137"])
+RJP1137 <- sqrt((xSumJP1137)^2+(ySumJP1137)^2+(zSumJP1137)^2)
+R0JP1137 <- sqrt(7.815*(length(cong$x[cong$Site=="JP1137"])/3))
+#Site JP1214
+xSumJP1214 <- sum(cong$x[cong$Site=="JP1214"])
+ySumJP1214 <- sum(cong$y[cong$Site=="JP1214"])
+zSumJP1214 <- sum(cong$z[cong$Site=="JP1214"])
+RJP1214 <- sqrt((xSumJP1214)^2+(ySumJP1214)^2+(zSumJP1214)^2)
+R0JP1214 <- sqrt(7.815*(length(cong$x[cong$Site=="JP1214"])/3))
+#Combined JP1137 & JP1214
+xSumJP1137JP1214 <- xSumJP1137+xSumJP1214
+ySumJP1137JP1214 <- ySumJP1137+ySumJP1214
+zSumJP1137JP1214 <- zSumJP1137+zSumJP1214
+RJP1137JP1214 <- sqrt((xSumJP1137JP1214)^2+(ySumJP1137JP1214)^2+(zSumJP1137JP1214)^2)
+R0JP1137JP1214 <- sqrt(7.815*(length(cong$x[cong$Site=="JP1137"|cong$Site=="JP1214"])/3))
+#Site JP1145
+xSumJP1145 <- sum(cong$x[cong$Site=="JP1145"])
+ySumJP1145 <- sum(cong$y[cong$Site=="JP1145"])
+zSumJP1145 <- sum(cong$z[cong$Site=="JP1145"])
+RJP1145 <- sqrt((xSumJP1145)^2+(ySumJP1145)^2+(zSumJP1145)^2)
+R0JP1145 <- sqrt(7.815*(length(cong$x[cong$Site=="JP1145"])/3))
+#Site JP1209
+xSumJP1209 <- sum(cong$x[cong$Site=="JP1209"])
+ySumJP1209 <- sum(cong$y[cong$Site=="JP1209"])
+zSumJP1209 <- sum(cong$z[cong$Site=="JP1209"])
+RJP1209 <- sqrt((xSumJP1209)^2+(ySumJP1209)^2+(zSumJP1209)^2)
+R0JP1209 <- sqrt(7.815*(length(cong$x[cong$Site=="JP1209"])/3))
+#Combined JP1145 & JP1209
+xSumJP1145JP1209 <- xSumJP1145+xSumJP1209
+ySumJP1145JP1209 <- ySumJP1145+ySumJP1209
+zSumJP1145JP1209 <- zSumJP1145+zSumJP1209
+RJP1145JP1209 <- sqrt((xSumJP1145JP1209)^2+(ySumJP1145JP1209)^2+(zSumJP1145JP1209)^2)
+R0JP1145JP1209 <- sqrt(7.815*(length(cong$x[cong$Site=="JP1145"|cong$Site=="JP1209"])/3))
+```
+
+We can now put the $R$ and $R_0$ values for each in a table to determine whether sites pass the randomness test.
+
+```{r}
+R <- c(RJP1137, RJP1214, RJP1137JP1214, RJP1145, RJP1209, RJP1145JP1209)
+R_0 <- c(R0JP1137, R0JP1214, R0JP1137JP1214, R0JP1145, R0JP1209, R0JP1145JP1209)
+R_max <- c(length(cong$x[cong$Site=="JP1137"]),length(cong$x[cong$Site=="JP1214"]),length(cong$x[cong$Site=="JP1137"|cong$Site=="JP1214"]), length(cong$x[cong$Site=="JP1145"]), length(cong$x[cong$Site=="JP1209"]), length(cong$x[cong$Site=="JP1145"|cong$Site=="JP1209"]))
+RTest <- data.frame(R, R_0, R_max, row.names=c("JP1137", "JP1214", "JP1137 & JP1214", "JP1145", "JP1209", "JP1145 & JP1209"))
+RTest %>%
+  kbl() %>%
+  kable_styling(full_width = F, html_font = "Cambria",
+                position = "left", bootstrap_options ="hover") %>%
+  column_spec(2, color=ifelse(RTest$R>RTest$R_0, "white", "black"),
+              background=ifelse(RTest$R>RTest$R_0, "lightcoral", "white")) %>%
+  column_spec(1, bold=TRUE)
+```
+
+## Discussion
+This shows that overall the conglomerate sites pass the Watson (1956) randomness test with site $R$ values being smaller than site $R_0$ values. The exception being **JP1214** and **combined JP1137 & JP1214**. There is a cluster within JP1214 that show a remanace of north and steeply-downward. The origin of the overprint is unknown
